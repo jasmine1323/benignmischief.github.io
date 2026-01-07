@@ -258,6 +258,7 @@
             <select id="sort-select">
                 <option value="title">Title (A-Z)</option>
                 <option value="author">Author (A-Z)</option>
+                <option value="genre">Genre (A-Z)</option>
                 <option value="year">Year (Newest First)</option>
                 <option value="year-old">Year (Oldest First)</option>
                 <option value="random">Random</option>
@@ -283,8 +284,317 @@
         </div>
     </div>
 
-    <!-- Load book data and functionality -->
-    <script src="books-data.js"></script>
-    <script src="library.js"></script>
+    <script>
+        // ========================================
+        // GENRE COLOR PALETTE - EDIT THESE COLORS FOR EACH GENRE
+        // ========================================
+        const genreColors = {
+            "Fiction": "#8B4513",           // Brown
+            "Dystopian": "#2F4F4F",         // Dark Slate Gray
+            "Classic": "#8B0000",           // Dark Red
+            "Romance": "#8B4789",           // Purple
+            "Coming of Age": "#CD5C5C",     // Indian Red
+            "Adventure": "#483D8B",         // Dark Slate Blue
+            "Fantasy": "#006400",           // Dark Green
+            "Science Fiction": "#D2691E",   // Chocolate
+            "Epic": "#8B4513",              // Saddle Brown
+            "Philosophy": "#4B0082",        // Indigo
+            "Non-Fiction": "#CD853F",       // Peru
+            "History": "#A0522D",           // Sienna
+            "Biography": "#8B7355",         // Burlywood4
+            "Mystery": "#191970",           // Midnight Blue
+            "Horror": "#8B0000",            // Dark Red
+            "Poetry": "#9370DB",            // Medium Purple
+            "Drama": "#B8860B"              // Dark Goldenrod
+        };
+
+        // ========================================
+        // BOOK DATA - EDIT THIS SECTION TO ADD/MODIFY BOOKS
+        // Add genre field - color will be automatically assigned from genreColors
+        // ========================================
+        const books = [
+            {
+                title: "The Great Gatsby",
+                author: "F. Scott Fitzgerald",
+                edition: "First Edition",
+                year: 1925,
+                genre: "Fiction",
+                width: 45,
+                annotations: "A masterpiece of American literature exploring themes of wealth, love, and the American Dream in the Jazz Age. Fitzgerald's prose is lyrical and his characters unforgettable."
+            },
+            {
+                title: "1984",
+                author: "George Orwell",
+                edition: "Penguin Classics",
+                year: 1949,
+                genre: "Dystopian",
+                width: 42,
+                annotations: "A dystopian warning about totalitarianism that remains chillingly relevant. Orwell's vision of surveillance, propaganda, and control feels prescient in our modern age."
+            },
+            {
+                title: "To Kill a Mockingbird",
+                author: "Harper Lee",
+                edition: "50th Anniversary Edition",
+                year: 1960,
+                genre: "Classic",
+                width: 50,
+                annotations: "A profound exploration of racial injustice and moral growth in the American South. Scout's perspective brings both innocence and clarity to complex themes."
+            },
+            {
+                title: "Pride and Prejudice",
+                author: "Jane Austen",
+                edition: "Oxford World's Classics",
+                year: 1813,
+                genre: "Romance",
+                width: 38,
+                annotations: "Austen's wit and social commentary shine through this romance. Elizabeth Bennet remains one of literature's most beloved heroines."
+            },
+            {
+                title: "The Catcher in the Rye",
+                author: "J.D. Salinger",
+                edition: "Little, Brown and Company",
+                year: 1951,
+                genre: "Coming of Age",
+                width: 44,
+                annotations: "Holden Caulfield's voice captures teenage angst and alienation perfectly. A controversial but deeply influential coming-of-age story."
+            },
+            {
+                title: "Moby-Dick",
+                author: "Herman Melville",
+                edition: "Norton Critical Edition",
+                year: 1851,
+                genre: "Adventure",
+                width: 55,
+                annotations: "An epic tale of obsession and the human struggle against nature. Melville's symbolism and philosophy make this more than just a whale hunt."
+            },
+            {
+                title: "The Hobbit",
+                author: "J.R.R. Tolkien",
+                edition: "Illustrated Edition",
+                year: 1937,
+                genre: "Fantasy",
+                width: 40,
+                annotations: "A delightful adventure that introduced Middle-earth. Bilbo's journey from comfort to courage resonates with readers of all ages."
+            },
+            {
+                title: "Brave New World",
+                author: "Aldous Huxley",
+                edition: "Harper Perennial",
+                year: 1932,
+                genre: "Dystopian",
+                width: 46,
+                annotations: "A dystopia of pleasure and control rather than pain. Huxley's vision of a society drugged into complacency is hauntingly plausible."
+            },
+            {
+                title: "The Lord of the Rings",
+                author: "J.R.R. Tolkien",
+                edition: "50th Anniversary Edition",
+                year: 1954,
+                genre: "Fantasy",
+                width: 60,
+                annotations: "The epic fantasy that defined a genre. Tolkien's world-building and themes of friendship, sacrifice, and the corrupting nature of power are unmatched."
+            },
+            {
+                title: "Dune",
+                author: "Frank Herbert",
+                edition: "Deluxe Edition",
+                year: 1965,
+                genre: "Science Fiction",
+                width: 48,
+                annotations: "A complex science fiction masterwork about ecology, religion, and politics. Herbert created a richly detailed universe that rewards multiple readings."
+            },
+            {
+                title: "The Republic",
+                author: "Plato",
+                edition: "Hackett Classics",
+                year: -380,
+                genre: "Philosophy",
+                width: 52,
+                annotations: "Plato's cornerstone work on justice, the ideal state, and the nature of reality. The allegory of the cave remains one of philosophy's most enduring metaphors."
+            },
+            {
+                title: "Meditations",
+                author: "Marcus Aurelius",
+                edition: "Modern Library",
+                year: 180,
+                genre: "Philosophy",
+                width: 40,
+                annotations: "The private reflections of a Roman emperor on Stoic philosophy. Timeless wisdom on virtue, mortality, and living a meaningful life."
+            },
+            {
+                title: "The Odyssey",
+                author: "Homer",
+                edition: "Penguin Classics",
+                year: -800,
+                genre: "Epic",
+                width: 48,
+                annotations: "The epic journey home of Odysseus after the Trojan War. A foundational text of Western literature filled with adventure, gods, and human perseverance."
+            },
+            {
+                title: "Frankenstein",
+                author: "Mary Shelley",
+                edition: "Dover Thrift",
+                year: 1818,
+                genre: "Horror",
+                width: 42,
+                annotations: "The birth of science fiction and a gothic masterpiece. Shelley's tale of creation and responsibility remains hauntingly relevant."
+            },
+            {
+                title: "The Brothers Karamazov",
+                author: "Fyodor Dostoevsky",
+                edition: "Vintage Classics",
+                year: 1880,
+                genre: "Fiction",
+                width: 58,
+                annotations: "Dostoevsky's final masterpiece exploring faith, doubt, morality, and free will through the complex relationships of the Karamazov family."
+            },
+            {
+                title: "One Hundred Years of Solitude",
+                author: "Gabriel García Márquez",
+                edition: "Harper Perennial",
+                year: 1967,
+                genre: "Fiction",
+                width: 46,
+                annotations: "A magical realist epic chronicling the Buendía family across generations. García Márquez weaves myth and reality into an unforgettable narrative."
+            },
+            {
+                title: "The Handmaid's Tale",
+                author: "Margaret Atwood",
+                edition: "Anchor Books",
+                year: 1985,
+                genre: "Dystopian",
+                width: 44,
+                annotations: "A chilling vision of a theocratic future where women are stripped of rights. Atwood's dystopia feels increasingly prescient with each passing year."
+            },
+            {
+                title: "Sapiens",
+                author: "Yuval Noah Harari",
+                edition: "Harper",
+                year: 2011,
+                genre: "Non-Fiction",
+                width: 50,
+                annotations: "A sweeping history of humankind from the Stone Age to the present. Harari examines how Homo sapiens came to dominate the world."
+            },
+            {
+                title: "The Iliad",
+                author: "Homer",
+                edition: "Penguin Classics",
+                year: -750,
+                genre: "Epic",
+                width: 50,
+                annotations: "The epic tale of the Trojan War, centered on the wrath of Achilles. Homer's masterpiece of heroism, honor, and the human condition."
+            },
+            {
+                title: "Crime and Punishment",
+                author: "Fyodor Dostoevsky",
+                edition: "Vintage Classics",
+                year: 1866,
+                genre: "Fiction",
+                width: 54,
+                annotations: "A psychological thriller exploring guilt, redemption, and morality. Raskolnikov's descent into madness is unforgettable."
+            }
+        ];
+        // ========================================
+        // END OF BOOK DATA
+        // ========================================
+
+        let currentBooks = [...books];
+
+        // Get color for a book based on its genre
+        function getBookColor(book) {
+            return genreColors[book.genre] || "#8B4513"; // Default to brown if genre not found
+        }
+
+        // Calculate book height based on title length
+        function getBookHeight(title) {
+            // Base height: 140px
+            // Add approximately 4.5px per character (accounting for vertical text)
+            const baseHeight = 140;
+            const pixelsPerChar = 4.5;
+            return baseHeight + (title.length * pixelsPerChar);
+        }
+
+        function renderBooks() {
+            const shelvesContainer = document.getElementById('shelves');
+            shelvesContainer.innerHTML = '';
+
+            // Create a single shelf that will wrap books naturally
+            const shelf = document.createElement('div');
+            shelf.className = 'bookshelf';
+            shelf.style.flexWrap = 'wrap';
+            shelf.style.minHeight = '300px';
+            shelf.style.height = 'auto';
+            shelf.style.alignContent = 'flex-end';
+            
+            currentBooks.forEach(book => {
+                const bookEl = document.createElement('div');
+                bookEl.className = 'book';
+                bookEl.style.backgroundColor = getBookColor(book);
+                bookEl.style.height = getBookHeight(book.title) + 'px';
+                bookEl.style.width = book.width + 'px';
+                
+                bookEl.innerHTML = `
+                    <div class="book-spine">${book.title}</div>
+                    <div class="book-tooltip">${book.title}<br>${book.author}</div>
+                `;
+                
+                bookEl.onclick = () => openModal(book);
+                shelf.appendChild(bookEl);
+            });
+            
+            shelvesContainer.appendChild(shelf);
+        }
+
+        function openModal(book) {
+            document.getElementById('modal-title').textContent = book.title;
+            document.getElementById('modal-author').textContent = book.author;
+            document.getElementById('modal-edition').textContent = book.edition;
+            document.getElementById('modal-year').textContent = book.year;
+            document.getElementById('modal-annotations').textContent = book.annotations;
+            document.getElementById('book-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('book-modal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('book-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Sorting
+        document.getElementById('sort-select').addEventListener('change', function(e) {
+            const sortType = e.target.value;
+            
+            switch(sortType) {
+                case 'title':
+                    currentBooks.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+                case 'author':
+                    currentBooks.sort((a, b) => a.author.localeCompare(b.author));
+                    break;
+                case 'genre':
+                    currentBooks.sort((a, b) => a.genre.localeCompare(b.genre));
+                    break;
+                case 'year':
+                    currentBooks.sort((a, b) => b.year - a.year);
+                    break;
+                case 'year-old':
+                    currentBooks.sort((a, b) => a.year - b.year);
+                    break;
+                case 'random':
+                    currentBooks.sort(() => Math.random() - 0.5);
+                    break;
+            }
+            
+            renderBooks();
+        });
+
+        // Initial render
+        renderBooks();
+    </script>
 </body>
 </html>
