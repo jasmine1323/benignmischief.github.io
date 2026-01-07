@@ -325,8 +325,11 @@
             
             <label for="theme-select" style="margin-left: 30px;">[THEME]</label>
             <select id="theme-select">
-                <option value="ascii">ascii</option>
-                <option value="classic">classic</option>
+                <option value="light">light</option>
+                <option value="dark">dark</option>
+                <option value="space">space</option>
+                <option value="terminal">terminal</option>
+                <option value="forest">forest</option>
             </select>
         </div>
 
@@ -661,107 +664,137 @@
         // Initial render
         renderBooks();
 
+        // Theme definitions
+        const themes = {
+            light: {
+                bodyBg: '#f5f5f5',
+                containerBg: '#fff',
+                containerBorder: '#333',
+                textColor: '#000',
+                secondaryText: '#666',
+                controlsBg: '#f0f0f0',
+                controlsBorder: '#333',
+                selectBg: 'white',
+                selectBorder: '#333'
+            },
+            dark: {
+                bodyBg: '#1a1a1a',
+                containerBg: '#2a2a2a',
+                containerBorder: '#fff',
+                textColor: '#fff',
+                secondaryText: '#ccc',
+                controlsBg: '#3a3a3a',
+                controlsBorder: '#fff',
+                selectBg: '#2a2a2a',
+                selectBorder: '#fff'
+            },
+            space: {
+                bodyBg: '#0a0a1a',
+                containerBg: '#1a1a2e',
+                containerBorder: '#4a5f8f',
+                textColor: '#a8c0ff',
+                secondaryText: '#7a9ad8',
+                controlsBg: '#252538',
+                controlsBorder: '#4a5f8f',
+                selectBg: '#1a1a2e',
+                selectBorder: '#4a5f8f'
+            },
+            terminal: {
+                bodyBg: '#2b0000',
+                containerBg: '#3d0000',
+                containerBorder: '#ff4444',
+                textColor: '#ff6666',
+                secondaryText: '#cc4444',
+                controlsBg: '#4d0000',
+                controlsBorder: '#ff4444',
+                selectBg: '#3d0000',
+                selectBorder: '#ff4444'
+            },
+            forest: {
+                bodyBg: '#1a2a1a',
+                containerBg: '#2a3a2a',
+                containerBorder: '#6b8e6b',
+                textColor: '#a8d8a8',
+                secondaryText: '#7db87d',
+                controlsBg: '#3a4a3a',
+                controlsBorder: '#6b8e6b',
+                selectBg: '#2a3a2a',
+                selectBorder: '#6b8e6b'
+            }
+        };
+
         // Theme switching
         document.getElementById('theme-select').addEventListener('change', function(e) {
-            const theme = e.target.value;
-            const body = document.body;
-            const container = document.querySelector('.container');
-            const header = document.querySelector('header');
-            const h1 = document.querySelector('h1');
-            const navLink = document.querySelector('.nav-link');
-            const controls = document.querySelector('.controls');
-            const labels = document.querySelectorAll('.controls label');
-            const selects = document.querySelectorAll('.controls select');
+            const themeName = e.target.value;
+            const theme = themes[themeName];
             
-            if (theme === 'classic') {
-                // Classic theme
-                body.style.fontFamily = 'Georgia, serif';
-                body.style.background = 'linear-gradient(to bottom, #f4f1e8 0%, #e8e3d6 100%)';
-                container.style.border = 'none';
-                container.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                container.style.padding = '40px';
-                header.style.borderBottom = '3px solid #222';
-                header.style.paddingBottom = '20px';
-                header.style.marginBottom = '30px';
-                h1.style.fontSize = '2.5em';
-                h1.style.fontWeight = 'normal';
-                h1.style.letterSpacing = '-1px';
-                h1.textContent = '📚 Library';
-                navLink.style.color = '#2c5f3f';
-                navLink.textContent = '← Back to Home';
-                controls.style.background = '#f9f6ed';
-                controls.style.border = 'none';
-                controls.style.borderLeft = '4px solid #4a7c59';
-                controls.style.padding = '20px';
-                controls.style.marginBottom = '40px';
-                labels.forEach(label => {
-                    label.style.color = '#2c5f3f';
-                    label.textContent = label.textContent.replace('[', '').replace(']', '').replace('SORT', 'Sort by:').replace('THEME', 'Theme:');
-                });
-                selects.forEach(select => {
-                    select.style.fontFamily = 'Georgia, serif';
-                    select.style.fontSize = '1em';
-                    select.style.border = '2px solid #d4cfbe';
-                    select.style.padding = '8px 15px';
-                    // Update option text
-                    Array.from(select.options).forEach(option => {
-                        const value = option.value;
-                        if (value === 'title') option.text = 'Title (A-Z)';
-                        else if (value === 'author') option.text = 'Author (A-Z)';
-                        else if (value === 'genre') option.text = 'Genre (A-Z)';
-                        else if (value === 'year') option.text = 'Year (Newest First)';
-                        else if (value === 'year-old') option.text = 'Year (Oldest First)';
-                        else if (value === 'random') option.text = 'Random';
-                        else if (value === 'ascii') option.text = 'ASCII';
-                        else if (value === 'classic') option.text = 'Classic';
-                    });
-                });
-            } else {
-                // ASCII theme
-                body.style.fontFamily = "'Courier New', Courier, monospace";
-                body.style.background = '#f5f5f5';
-                container.style.border = '2px solid #333';
-                container.style.boxShadow = 'none';
-                container.style.padding = '30px';
-                header.style.borderBottom = '2px solid #333';
-                header.style.paddingBottom = '15px';
-                header.style.marginBottom = '25px';
-                h1.style.fontSize = '1.8em';
-                h1.style.fontWeight = 'bold';
-                h1.style.letterSpacing = '2px';
-                h1.textContent = '[ LIBRARY ]';
-                navLink.style.color = '#000';
-                navLink.textContent = '← back';
-                controls.style.background = '#f0f0f0';
-                controls.style.border = '1px solid #333';
-                controls.style.borderLeft = '1px solid #333';
-                controls.style.padding = '15px';
-                controls.style.marginBottom = '30px';
-                labels.forEach(label => {
-                    label.style.color = '#000';
-                    const currentText = label.textContent.toLowerCase();
-                    if (currentText.includes('sort')) label.textContent = '[SORT]';
-                    else if (currentText.includes('theme')) label.textContent = '[THEME]';
-                });
-                selects.forEach(select => {
-                    select.style.fontFamily = "'Courier New', Courier, monospace";
-                    select.style.fontSize = '0.9em';
-                    select.style.border = '1px solid #333';
-                    select.style.padding = '5px 10px';
-                    // Update option text
-                    Array.from(select.options).forEach(option => {
-                        const value = option.value;
-                        if (value === 'title') option.text = 'title (a-z)';
-                        else if (value === 'author') option.text = 'author (a-z)';
-                        else if (value === 'genre') option.text = 'genre (a-z)';
-                        else if (value === 'year') option.text = 'year (newest)';
-                        else if (value === 'year-old') option.text = 'year (oldest)';
-                        else if (value === 'random') option.text = 'random';
-                        else if (value === 'ascii') option.text = 'ascii';
-                        else if (value === 'classic') option.text = 'classic';
-                    });
-                });
-            }
+            // Apply theme
+            document.body.style.background = theme.bodyBg;
+            document.body.style.color = theme.textColor;
+            
+            const container = document.querySelector('.container');
+            container.style.background = theme.containerBg;
+            container.style.borderColor = theme.containerBorder;
+            
+            const header = document.querySelector('header');
+            header.style.borderColor = theme.containerBorder;
+            
+            const h1 = document.querySelector('h1');
+            h1.style.color = theme.textColor;
+            
+            const navLink = document.querySelector('.nav-link');
+            navLink.style.color = theme.textColor;
+            
+            const controls = document.querySelector('.controls');
+            controls.style.background = theme.controlsBg;
+            controls.style.borderColor = theme.controlsBorder;
+            
+            const labels = document.querySelectorAll('.controls label');
+            labels.forEach(label => label.style.color = theme.textColor);
+            
+            const selects = document.querySelectorAll('.controls select');
+            selects.forEach(select => {
+                select.style.background = theme.selectBg;
+                select.style.color = theme.textColor;
+                select.style.borderColor = theme.selectBorder;
+            });
+            
+            // Modal styling
+            const modal = document.querySelector('.modal');
+            modal.style.background = theme.bodyBg.replace(')', ', 0.9)').replace('rgb', 'rgba').replace('#', 'rgba(').replace(/(.{2})(.{2})(.{2})/, (m, r, g, b) => {
+                return `rgba(${parseInt(r, 16)}, ${parseInt(g, 16)}, ${parseInt(b, 16)}, 0.9)`;
+            });
+            
+            const modalContent = document.querySelector('.modal-content');
+            modalContent.style.background = theme.containerBg;
+            modalContent.style.borderColor = theme.containerBorder;
+            modalContent.style.color = theme.textColor;
+            
+            const modalClose = document.querySelector('.modal-close');
+            modalClose.style.color = theme.textColor;
+            
+            const modalTitle = document.querySelector('.modal-title');
+            modalTitle.style.color = theme.textColor;
+            
+            const modalAuthor = document.querySelector('.modal-author');
+            modalAuthor.style.color = theme.secondaryText;
+            
+            const modalDetails = document.querySelector('.modal-details');
+            modalDetails.style.borderColor = theme.controlsBorder;
+            modalDetails.style.color = theme.secondaryText;
+            
+            const modalDetailsStrong = document.querySelectorAll('.modal-details strong');
+            modalDetailsStrong.forEach(strong => strong.style.color = theme.textColor);
+            
+            const modalAnnotations = document.querySelector('.modal-annotations');
+            modalAnnotations.style.background = theme.controlsBg;
+            modalAnnotations.style.borderColor = theme.controlsBorder;
+            
+            const modalAnnotationsH3 = document.querySelector('.modal-annotations h3');
+            modalAnnotationsH3.style.color = theme.textColor;
+            
+            const modalAnnotationsP = document.querySelector('.modal-annotations p');
+            modalAnnotationsP.style.color = theme.secondaryText;
         });
     </script>
 </body>
