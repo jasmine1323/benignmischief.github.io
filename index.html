@@ -297,8 +297,22 @@
         }, {passive: false});
         
         /* ===== ASCII SNAKE GAME ===== */
-
         const overlay = document.getElementById("snake-overlay");
+        const toggle = document.getElementById("snake-toggle");
+    
+        if (!overlay) return;
+    
+        let snakeEnabled = true;
+    
+        if (toggle) {
+            toggle.addEventListener("click", () => {
+                snakeEnabled = !snakeEnabled;
+                overlay.style.display = snakeEnabled ? "block" : "none";
+                toggle.textContent = snakeEnabled
+                    ? "[ Snake : On ]"
+                    : "[ Snake : Off ]";
+            });
+        }
         let cols, rows;
         
         const CHAR_W = 14;
