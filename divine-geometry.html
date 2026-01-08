@@ -76,6 +76,10 @@
             border-color: #333;
         }
 
+        .image-item:hover .image-name {
+            opacity: 1;
+        }
+
         .image-item.dragging {
             opacity: 0.7;
             border-color: #000;
@@ -87,6 +91,20 @@
             height: 100%;
             pointer-events: none;
             user-select: none;
+        }
+
+        .image-name {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: #000;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 0.8em;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
         }
 
         .resize-handle {
@@ -168,6 +186,7 @@
         let offsetX, offsetY;
         let initialPositions = [];
         let initialSizes = [];
+        let zIndexCounter = 1;
 
         // Initialize images
         function initImages() {
@@ -176,14 +195,23 @@
             images.forEach((src, index) => {
                 const item = document.createElement('div');
                 item.className = 'image-item';
+                item.style.zIndex = zIndexCounter++;
                 
                 const img = document.createElement('img');
                 img.src = src;
                 img.alt = `Image ${index + 1}`;
                 
+                // Extract filename from path
+                const filename = src.split('/').pop();
+                
+                const imageName = document.createElement('div');
+                imageName.className = 'image-name';
+                imageName.textContent = filename;
+                
                 const resizeHandle = document.createElement('div');
                 resizeHandle.className = 'resize-handle';
                 
+                item.appendChild(imageName);
                 item.appendChild(img);
                 item.appendChild(resizeHandle);
                 
@@ -193,15 +221,34 @@
                 item.style.left = x + 'px';
                 item.style.top = y + 'px';
                 
-                // Initial size
-                const width = 400;
-                const height = 300;
-                item.style.width = width + 'px';
-                item.style.height = height + 'px';
+                // Wait for image to load to get natural size
+                img.onload = function() {
+                    const width = img.naturalWidth;
+                    const height = img.naturalHeight;
+                    
+                    // Scale down if too large
+                    const maxWidth = 600;
+                    const maxHeight = 600;
+                    let finalWidth = width;
+                    let finalHeight = height;
+                    
+                    if (width > maxWidth || height > maxHeight) {
+                        const scale = Math.min(maxWidth / width, maxHeight / height);
+                        finalWidth = width * scale;
+                        finalHeight = height * scale;
+                    }
+                    
+                    item.style.width = finalWidth + 'px';
+                    item.style.height = finalHeight + 'px';
+                    
+                    // Store initial size
+                    if (!initialSizes[index]) {
+                        initialSizes[index] = {width: finalWidth, height: finalHeight};
+                    }
+                };
                 
-                // Store initial position and size
+                // Store initial position
                 initialPositions.push({x, y});
-                initialSizes.push({width, height});
                 
                 // Add drag listeners
                 item.addEventListener('mousedown', startDrag);
@@ -218,6 +265,9 @@
             
             draggedElement = e.currentTarget;
             draggedElement.classList.add('dragging');
+            
+            // Bring to front
+            draggedElement.style.zIndex = zIndexCounter++;
             
             const rect = draggedElement.getBoundingClientRect();
             const canvas = document.getElementById('canvas');
