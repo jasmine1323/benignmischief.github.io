@@ -360,14 +360,19 @@
             };
         
             if (
-                head.x < 0 || head.y < 0 ||
-                head.x >= cols || head.y >= rows ||
+            //     head.x < 0 || head.y < 0 ||
+            //     head.x >= cols || head.y >= rows ||
                 snake.some(s => s.x === head.x && s.y === head.y)
             ) {
-                resetGame();
-                return;
+                 resetGame();
+                 return;
             }
-        
+            // wrap instead of dying
+            if (head.x < 0) head.x = cols - 1;
+            if (head.x >= cols) head.x = 0;
+            if (head.y < 0) head.y = rows - 1;
+            if (head.y >= rows) head.y = 0;
+            
             snake.unshift(head);
         
             if (head.x === food.x && head.y === food.y) {
