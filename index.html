@@ -343,19 +343,17 @@
                 y: snake[0].y + dir.y
             };
         
-            if (
-            //     head.x < 0 || head.y < 0 ||
-            //     head.x >= cols || head.y >= rows ||
-                snake.some(s => s.x === head.x && s.y === head.y)
-            ) {
-                 resetGame();
-                 return;
-            }
             // wrap instead of dying
             if (head.x < 0) head.x = cols - 1;
             if (head.x >= cols) head.x = 0;
             if (head.y < 0) head.y = rows - 1;
             if (head.y >= rows) head.y = 0;
+
+            // self-collision still matters
+            if (snake.some(s => s.x === head.x && s.y === head.y)) {
+                resetSnake();
+                return;
+            }
             
             snake.unshift(head);
         
