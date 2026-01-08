@@ -103,13 +103,20 @@
             margin-right: 10px;
         }
 
-        .theme-selector select {
+        .theme-selector select,
+        .theme-selector button {
             padding: 5px 10px;
             font-family: 'Courier New', Courier, monospace;
             font-size: 0.9em;
             border: 1px solid #333;
             background: white;
             cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .theme-selector button:hover {
+            background: #000;
+            color: #fff;
         }
 
         .nav-grid {
@@ -259,6 +266,7 @@
                 <option value="terminal">terminal</option>
                 <option value="forest">forest</option>
             </select>
+            <button id="snake-toggle" onclick="toggleSnake()">[SNAKE: ON]</button>
         </div>
 
         <div class="about">
@@ -343,6 +351,45 @@
         let gridWidth, gridHeight;
         let obstacles = [];
         let snakeInitialized = false;
+        let snakeEnabled = localStorage.getItem('snakeEnabled') !== 'false';
+        let snakeIntervalId = null;
+
+        function toggleSnake() {
+            snakeEnabled = !snakeEnabled;
+            localStorage.setItem('snakeEnabled', snakeEnabled);
+            const btn = document.getElementById('snake-toggle');
+            btn.textContent = snakeEnabled ? '[SNAKE: ON]' : '[SNAKE: OFF]';
+            
+            if (snakeEnabled) {
+                if (!snakeInitialized) {
+                    initBgSnake();
+                }
+                const layer = document.getElementById('snake-layer');
+                if (layer) layer.style.display = 'block';
+                startSnakeLoop();
+            } else {
+                const layer = document.getElementById('snake-layer');
+                if (layer) layer.style.display = 'none';
+                stopSnakeLoop();
+            }
+        }
+
+        function startSnakeLoop() {
+            if (snakeIntervalId) return;
+            snakeIntervalId = setInterval(() => {
+                if (snakeInitialized && snakeEnabled) {
+                    randomTurn();
+                    bgGameLoop();
+                }
+            }, 150);
+        }
+
+        function stopSnakeLoop() {
+            if (snakeIntervalId) {
+                clearInterval(snakeIntervalId);
+                snakeIntervalId = null;
+            }
+        }
 
         function updateGrid() {
             gridWidth = Math.floor(window.innerWidth / CELL_SIZE);
@@ -478,14 +525,24 @@
 
         // Wait for page to load before starting snake
         window.addEventListener('load', function() {
-            initBgSnake();
-            setInterval(() => {
-                if (snakeInitialized) {
-                    randomTurn();
-                    bgGameLoop();
-                }
-            }, 150);
+            snakeLayer = document.getElementById('snake-layer');
+            const btn = document.getElementById('snake-toggle');
+            btn.textContent = snakeEnabled ? '[SNAKE: ON]' : '[SNAKE: OFF]';
+            
+            if (snakeEnabled) {
+                initBgSnake();
+                startSnakeLoop();
+            } else {
+                if (snakeLayer) snakeLayer.style.display = 'none';
+            }
         });
+
+        // Prevent arrow keys from scrolling the page
+        window.addEventListener('keydown', function(e) {
+            if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+            }
+        }, {passive: false});
 
         window.addEventListener('resize', () => {
             if (snakeInitialized) {
