@@ -374,7 +374,7 @@
 
             // self-collision still matters
             if (snake.some(s => s.x === head.x && s.y === head.y)) {
-                resetSnake();
+                resetGame();
                 return;
             }
             
