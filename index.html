@@ -197,7 +197,7 @@
                 <option value="terminal">terminal</option>
                 <option value="forest">forest</option>
             </select>
-        
+  
             <span style="margin-left:20px; cursor:pointer;" id="snake-toggle">
                 [ Snake : On ]
             </span>
@@ -296,6 +296,7 @@
             }
         }, {passive: false});
         
+        document.addEventListener("DOMContentLoaded", () => {
         /* ===== ASCII SNAKE GAME ===== */
         const overlay = document.getElementById("snake-overlay");
         const toggle = document.getElementById("snake-toggle");
@@ -393,6 +394,7 @@
         }
         
         setInterval(tick, 120);
+        });
 
     </script>
 </body>
