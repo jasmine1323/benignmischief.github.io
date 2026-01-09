@@ -40,6 +40,60 @@
             overflow: hidden;
         }
 
+        /* ===== MOBILE TOUCH CONTROLS ===== */
+        .touch-controls {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: auto;
+            display: none;
+        }
+
+        .touch-zone {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .touch-zone:active {
+            opacity: 0.1;
+            background: rgba(0, 255, 0, 0.3);
+        }
+
+        .touch-up {
+            top: 0;
+            left: 25%;
+            width: 50%;
+            height: 33.33%;
+        }
+
+        .touch-down {
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 33.33%;
+        }
+
+        .touch-left {
+            left: 0;
+            top: 33.33%;
+            width: 25%;
+            height: 33.33%;
+        }
+
+        .touch-right {
+            right: 0;
+            top: 33.33%;
+            width: 25%;
+            height: 33.33%;
+        }
+
+        @media (max-width: 768px), (hover: none) {
+            .touch-controls {
+                display: block;
+            }
+        }
+
         /* ===== OUROBOROS MODAL ===== */
         #ouroboros-modal {
             position: fixed;
@@ -328,6 +382,14 @@
 <body>
     <pre id="snake-overlay"></pre>
     
+    <!-- Mobile Touch Controls -->
+    <div class="touch-controls" id="touch-controls">
+        <div class="touch-zone touch-up" data-direction="up"></div>
+        <div class="touch-zone touch-down" data-direction="down"></div>
+        <div class="touch-zone touch-left" data-direction="left"></div>
+        <div class="touch-zone touch-right" data-direction="right"></div>
+    </div>
+    
     <!-- Ouroboros Easter Egg Modal -->
     <div id="ouroboros-modal">
         <div class="ouroboros-container">
@@ -545,6 +607,32 @@
             if (e.key === "ArrowLeft" && dir.x === 0) dir = { x: -1, y: 0 };
             if (e.key === "ArrowRight" && dir.x === 0) dir = { x: 1, y: 0 };
         });
+        
+        // Mobile touch controls
+        const touchZones = document.querySelectorAll('.touch-zone');
+        touchZones.forEach(zone => {
+            zone.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const direction = zone.dataset.direction;
+                
+                if (direction === 'up' && dir.y === 0) dir = { x: 0, y: -1 };
+                if (direction === 'down' && dir.y === 0) dir = { x: 0, y: 1 };
+                if (direction === 'left' && dir.x === 0) dir = { x: -1, y: 0 };
+                if (direction === 'right' && dir.x === 0) dir = { x: 1, y: 0 };
+            }, { passive: false });
+        });
+        
+        // Show/hide touch controls based on snake toggle
+        const touchControls = document.getElementById('touch-controls');
+        if (toggle) {
+            toggle.addEventListener("click", () => {
+                snakeEnabled = !snakeEnabled;
+                overlay.style.display = snakeEnabled ? "block" : "none";
+                toggle.textContent = snakeEnabled
+                    ? "[ Snake : On ]"
+                    : "[ Snake : Off ]";
+            });
+        }
         
         function getTickInterval() {
             // Base speed: 200ms for length 1
