@@ -92,6 +92,14 @@
             .touch-controls {
                 display: block;
             }
+            
+            .touch-controls.hidden {
+                display: none !important;
+            }
+        }
+
+        #snake-overlay.hidden {
+            display: none !important;
         }
 
         /* ===== OUROBOROS MODAL ===== */
@@ -547,11 +555,16 @@
         if (toggle) {
             toggle.addEventListener("click", () => {
                 snakeEnabled = !snakeEnabled;
-                overlay.style.display = snakeEnabled ? "block" : "none";
                 const touchControls = document.getElementById('touch-controls');
-                if (touchControls) {
-                    touchControls.style.display = snakeEnabled ? "block" : "none";
+                
+                if (snakeEnabled) {
+                    overlay.classList.remove('hidden');
+                    if (touchControls) touchControls.classList.remove('hidden');
+                } else {
+                    overlay.classList.add('hidden');
+                    if (touchControls) touchControls.classList.add('hidden');
                 }
+                
                 toggle.textContent = snakeEnabled
                     ? "[ Snake : On ]"
                     : "[ Snake : Off ]";
