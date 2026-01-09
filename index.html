@@ -545,7 +545,10 @@
     
         let snakeEnabled = true;
     
-        toggle.addEventListener("click", function() {
+        toggle.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             console.log("Toggle clicked! Current state:", snakeEnabled);
             snakeEnabled = !snakeEnabled;
             console.log("New state:", snakeEnabled);
@@ -553,15 +556,16 @@
             if (snakeEnabled) {
                 overlay.style.display = "block";
                 overlay.style.visibility = "visible";
-                toggle.textContent = "[ Snake : On ]";
+                toggle.innerHTML = "[ Snake : On ]";
                 console.log("Set to ON");
             } else {
                 overlay.style.display = "none";
                 overlay.style.visibility = "hidden";
-                toggle.textContent = "[ Snake : Off ]";
+                toggle.innerHTML = "[ Snake : Off ]";
                 console.log("Set to OFF");
             }
             console.log("Overlay display:", overlay.style.display);
+            console.log("Toggle text after change:", toggle.textContent);
         });
         
         let cols, rows;
