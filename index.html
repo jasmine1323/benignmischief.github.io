@@ -560,16 +560,15 @@
                 if (snakeEnabled) {
                     overlay.classList.remove('hidden');
                     if (touchControls) touchControls.classList.remove('hidden');
+                    toggle.textContent = "[ Snake : On ]";
                 } else {
                     overlay.classList.add('hidden');
                     if (touchControls) touchControls.classList.add('hidden');
+                    toggle.textContent = "[ Snake : Off ]";
                 }
-                
-                toggle.textContent = snakeEnabled
-                    ? "[ Snake : On ]"
-                    : "[ Snake : Off ]";
             });
         }
+        
         let cols, rows;
         
         let snake, food, dir, running = true;
