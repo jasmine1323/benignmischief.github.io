@@ -280,6 +280,7 @@
         #snake-toggle {
             cursor: pointer;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         .nav-grid {
@@ -515,6 +516,12 @@
             overlay.style.color = t.snakeColor;
         }
         
+        // Don't reset toggle text
+        const toggleBtn = document.getElementById('snake-toggle');
+        if (toggleBtn) {
+            s('#snake-toggle', {color: t.textColor});
+        }
+        
         localStorage.setItem('siteTheme',n);
         window.currentTheme = n;
         }
@@ -553,19 +560,29 @@
             snakeEnabled = !snakeEnabled;
             console.log("New state:", snakeEnabled);
             
+            // Force clear and rewrite
+            toggle.innerHTML = "";
+            
             if (snakeEnabled) {
                 overlay.style.display = "block";
                 overlay.style.visibility = "visible";
-                toggle.innerHTML = "[ Snake : On ]";
+                setTimeout(() => {
+                    toggle.innerHTML = "[ Snake : On ]";
+                }, 10);
                 console.log("Set to ON");
             } else {
                 overlay.style.display = "none";
                 overlay.style.visibility = "hidden";
-                toggle.innerHTML = "[ Snake : Off ]";
+                setTimeout(() => {
+                    toggle.innerHTML = "[ Snake : Off ]";
+                }, 10);
                 console.log("Set to OFF");
             }
             console.log("Overlay display:", overlay.style.display);
-            console.log("Toggle text after change:", toggle.textContent);
+            
+            setTimeout(() => {
+                console.log("Toggle text after 50ms:", toggle.textContent);
+            }, 50);
         });
         
         let cols, rows;
