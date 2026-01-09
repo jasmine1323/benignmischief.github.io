@@ -552,13 +552,16 @@
             
             if (snakeEnabled) {
                 overlay.style.display = "block";
+                overlay.style.visibility = "visible";
                 toggle.textContent = "[ Snake : On ]";
                 console.log("Set to ON");
             } else {
                 overlay.style.display = "none";
+                overlay.style.visibility = "hidden";
                 toggle.textContent = "[ Snake : Off ]";
                 console.log("Set to OFF");
             }
+            console.log("Overlay display:", overlay.style.display);
         });
         
         let cols, rows;
