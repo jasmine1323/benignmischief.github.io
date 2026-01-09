@@ -553,23 +553,23 @@
             return;
         }
     
-        let snakeEnabled = true;
+        window.snakeEnabled = true;
         
-        console.log("Snake game initialized. Enabled:", snakeEnabled);
+        console.log("Snake game initialized. Enabled:", window.snakeEnabled);
     
         toggle.addEventListener("click", function(e) {
             e.preventDefault();
             e.stopPropagation();
             
             console.log("=== TOGGLE CLICKED ===");
-            console.log("Before toggle - snakeEnabled:", snakeEnabled);
-            snakeEnabled = !snakeEnabled;
-            console.log("After toggle - snakeEnabled:", snakeEnabled);
+            console.log("Before toggle - snakeEnabled:", window.snakeEnabled);
+            window.snakeEnabled = !window.snakeEnabled;
+            console.log("After toggle - snakeEnabled:", window.snakeEnabled);
             
             // Force clear and rewrite
             toggle.innerHTML = "";
             
-            if (snakeEnabled) {
+            if (window.snakeEnabled) {
                 console.log("Turning snake ON");
                 overlay.style.display = "block";
                 overlay.style.visibility = "visible";
@@ -590,7 +590,7 @@
             setTimeout(() => {
                 console.log("Final state - Overlay display:", overlay.style.display);
                 console.log("Final state - Toggle text:", toggle.textContent);
-                console.log("Final state - snakeEnabled:", snakeEnabled);
+                console.log("Final state - snakeEnabled:", window.snakeEnabled);
             }, 50);
         });
         
@@ -653,6 +653,8 @@
         touchZones.forEach(zone => {
             zone.addEventListener('touchstart', (e) => {
                 e.preventDefault();
+                if (!window.snakeEnabled) return; // Don't process touches if snake is off
+                
                 const direction = zone.dataset.direction;
                 
                 if (direction === 'up' && dir.y === 0) dir = { x: 0, y: -1 };
